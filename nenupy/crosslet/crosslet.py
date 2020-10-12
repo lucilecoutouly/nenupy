@@ -56,7 +56,7 @@ log = logging.getLogger(__name__)
 # ------------------------- Functions ------------------------- #
 # ============================================================= #
 try:
-    from numba import jit
+    from numba import jit,prange
 except ModuleNotFoundError:
     from functools import wraps
     def jit(**kwargs):
@@ -427,7 +427,7 @@ class Crosslet(object):
         c[:, :, trix, triy] = cpol
         c[:, :, triy, trix] = c[:, :, trix, triy].conj()
         # Calibrate the Xcorr with the caltable
-        for fi in range(c.shape[1]):
+        for fi in prange(c.shape[1]):
             cal_i = np.expand_dims(cal[fi], axis=1)
             cal_i_h = np.expand_dims(cal[fi].T.conj(), axis=0)
             mul = np.dot(cal_i, cal_i_h)
@@ -547,7 +547,7 @@ class Crosslet(object):
             axis=0
         )[f_idx, :][self.mask_auto]
         im = np.zeros(l.size)
-        for i in tqdm(range(l.size)):
+        for i in tqdm(prange(l.size)):
             im[i] = np.real(
                 ft_sum(vis, phase[:, i])
             )
